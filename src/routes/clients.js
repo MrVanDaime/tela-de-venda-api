@@ -10,7 +10,7 @@ const getParamId = require('../utils/getParamId');
 const { clientValidation } = require('../validation/clients');
 
 // Endpoint atual
-const endPoint = '/api/clients';
+const endpoint = '/api/clients';
 
 // Dados local
 let clientsDb = require('../data/clients');
@@ -18,10 +18,10 @@ let clientsDb = require('../data/clients');
 module.exports = (req, res) => {
   const { method, url } = req;
 
-  if (method === 'GET' && url === `${endPoint}`) {
+  if (method === 'GET' && url === endpoint) {
     res.statusCode = 200;
     res.end(JSON.stringify(clientsDb));
-  } else if (method === 'GET' && url.startsWith(`${endPoint}/`)) {
+  } else if (method === 'GET' && url.startsWith(`${endpoint}/`)) {
     const paramId = getParamId(url);
     const index = clientsDb.findIndex(client => client.id === paramId);
 
@@ -34,7 +34,7 @@ module.exports = (req, res) => {
     res.statusCode = 200;
     res.end(JSON.stringify(client));
 
-  } else if (method === 'POST' && url === `${endPoint}`) {
+  } else if (method === 'POST' && url === endpoint) {
     let body = '';
 
     req.on('data', chunk => {
@@ -57,7 +57,7 @@ module.exports = (req, res) => {
       res.statusCode = 201; // Criado com sucesso
       res.end(JSON.stringify({ msg: 'Cliente cadastrado com sucesso', newClient }));
     });
-  } else if (method === 'PUT' && url.startsWith(`${endPoint}/`)) {
+  } else if (method === 'PUT' && url.startsWith(`${endpoint}/`)) {
     const paramId = getParamId(url);
     const index = clientsDb.findIndex(client => client.id === paramId);
 
@@ -89,13 +89,14 @@ module.exports = (req, res) => {
       res.statusCode = 404;
       res.end(JSON.stringify({ msg: 'Cliente não existe' }));
     }
-  } else if (method === 'DELETE' && url.startsWith(`${endPoint}/`)) {
+  } else if (method === 'DELETE' && url.startsWith(`${endpoint}/`)) {
     const paramId = getParamId(url);
     const index = clientsDb.findIndex(client => client.id === paramId);
-    const client = clientsDb[index];
 
     if (index !== -1) {
+      const client = clientsDb[index]; // Salva o produto
       clientsDb.splice(index, 1);
+
       res.statusCode = 200;
       res.end(JSON.stringify({ msg: 'Cliente excluído', client }));
     } else {
