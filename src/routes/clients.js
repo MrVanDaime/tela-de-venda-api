@@ -20,7 +20,16 @@ module.exports = (req, res) => {
     getAllClients(res);
   } else if (method === 'GET' && url.startsWith(`${endpoint}/`)) {
     const paramId = getParamId(url);
-    getClientById(paramId, res);
+    const client = getClientById(paramId, res);
+
+    if (!client) {
+      res.statusCode = 404;
+      res.end(JSON.stringify({ msg: 'Cliente não existe' }));
+      return;
+    }
+
+    res.statusCode = 200;
+    res.end(JSON.stringify(client));
   } else if (method === 'POST' && url === endpoint) {
     let body = '';
 

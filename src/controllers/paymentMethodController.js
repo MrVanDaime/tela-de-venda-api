@@ -6,18 +6,12 @@ const getAllPaymentMethods = (res) => {
   res.end(JSON.stringify(paymentMethodsDb));
 };
 
-const getPaymentMethodById = (paramId, res) => {
+const getPaymentMethodById = (paramId) => {
   const index = paymentMethodsDb.findIndex(paymentMethod => paymentMethod.id === paramId);
 
-  if (index === -1) {
-    res.statusCode = 404;
-    res.end(JSON.stringify({ msg: 'Método de Pagamento não existe' }));
-    return;
-  }
+  if (index === -1) return;
 
-  const paymentMethod = paymentMethodsDb[index];
-  res.statusCode = 200;
-  res.end(JSON.stringify(paymentMethod));
+  return paymentMethodsDb[index];
 };
 
 const createPaymentMethod = (newPaymentMethod, res) => {

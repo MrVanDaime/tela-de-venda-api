@@ -6,20 +6,14 @@ const getAllClients = (res) => {
   res.end(JSON.stringify(clientsDb));
 };
 
-const getClientById = (paramId, res) => {
+const getClientById = (paramId) => {
   const index = clientsDb.findIndex(
     client => client.id === paramId
   );
 
-  if (index === -1) {
-    res.statusCode = 404;
-    res.end(JSON.stringify({ msg: 'Cliente não existe' }));
-    return;
-  }
+  if (index === -1) return;
 
-  const client = clientsDb[index];
-  res.statusCode = 200;
-  res.end(JSON.stringify(client));
+  return clientsDb[index];
 };
 
 const createClient = (newClient, res) => {

@@ -18,7 +18,16 @@ module.exports = (req, res) => {
     getAllProducts(res);
   } else if (method === 'GET' && url.startsWith(`${endpoint}/`)) {
     const paramId = getParamId(url);
-    getProductById(paramId, res);
+    const product = getProductById(paramId, res);
+
+    if (!product) {
+      res.statusCode = 404;
+      res.end(JSON.stringify({ msg: 'Produto não existe' }));
+      return;
+    }
+
+    res.statusCode = 200;
+    res.end(JSON.stringify(product));
   } else if (method === 'POST' && url === endpoint) {
     let body = '';
 
@@ -40,7 +49,10 @@ module.exports = (req, res) => {
 
     req.on('end', () => {
       const updatedProduct = JSON.parse(body);
-      updateProduct(paramId, updatedProduct, res);
+      const result = updateProduct(paramId, updatedProduct, res);
+
+      res.statusCode = 200; // Editado com sucesso
+      res.end(JSON.stringify(result));
     });
   } else if (method === 'DELETE' && url.startsWith(`${endpoint}/`)) {
     const paramId = getParamId(url);

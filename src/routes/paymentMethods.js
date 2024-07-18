@@ -20,7 +20,16 @@ module.exports = (req, res) => {
     getAllPaymentMethods(res);
   } else if (method === 'GET' && url.startsWith(`${endpoint}/`)) {
     const paramId = getParamId(url);
-    getPaymentMethodById(paramId, res);
+    const paymentMethod = getPaymentMethodById(paramId, res);
+
+    if (!paymentMethod) {
+      res.statusCode = 404;
+      res.end(JSON.stringify({ msg: 'Método de Pagamento não existe' }));
+      return;
+    }
+
+    res.statusCode = 200;
+    res.end(JSON.stringify(paymentMethod));
   } else if (method === 'POST' && url === endpoint) {
     let body = '';
 

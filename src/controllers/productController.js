@@ -6,20 +6,14 @@ const getAllProducts = (res) => {
   res.end(JSON.stringify(productsDb));
 };
 
-const getProductById = (paramId, res) => {
+const getProductById = (paramId) => {
   const index = productsDb.findIndex(
     product => product.id === paramId
   );
 
-  if (index === -1) {
-    res.statusCode = 404;
-    res.end(JSON.stringify({ msg: 'Produto não existe' }));
-    return;
-  }
+  if (index === -1) return;
 
-  const product = productsDb[index];
-  res.statusCode = 200;
-  res.end(JSON.stringify(product));
+  return productsDb[index];
 };
 
 const createProduct = (newProduct, res) => {
@@ -58,8 +52,7 @@ const updateProduct = (paramId, updatedProduct, res) => {
   updatedProduct.id = paramId;
   productsDb[index] = updatedProduct;
 
-  res.statusCode = 200; // Editado com sucesso
-  res.end(JSON.stringify({ msg: 'Produto atualizado com sucesso', updatedProduct }));
+  return { msg: 'Produto atualizado com sucesso', updatedProduct };
 };
 
 const deleteProduct = (paramId, res) => {
