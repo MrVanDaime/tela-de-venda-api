@@ -3,7 +3,7 @@ const productValidation = (product) => {
   // Validação do payload
   const fields = [
     { key: 'title', label: 'Título', type: 'string', min: 5, max: 50 },
-    { key: 'quantity', label: 'Quantidade', type: 'number', min: 1, max: 50 },
+    { key: 'quantity', label: 'Quantidade', type: 'number', min: 0, max: 50 },
     { key: 'price', label: 'Preço', type: 'number', min: 1, max: 1000 }
   ];
 
@@ -11,7 +11,7 @@ const productValidation = (product) => {
     let value = product[field.key];
     let label = field.label;
 
-    if (!value) {
+    if (value === undefined || value === null || value === '') {
       return `O campo "${label}" é obrigatório`;
     }
 
