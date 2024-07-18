@@ -2,6 +2,7 @@ const http = require('http');
 const clientsRoute = require('./routes/clients');
 const productsRoute = require('./routes/products');
 const paymentMethodsRoute = require('./routes/paymentMethods');
+const ordersRoute = require('./routes/orders');
 
 const hostname = 'localhost';
 const PORT = process.env.PORT || 3000;
@@ -22,13 +23,15 @@ const server = http.createServer((req, res) => {
   // Normal header
   res.setHeader('Content-Type', 'application/json');
 
-  // Clientes
+  // Routes
   if (req.url.startsWith('/api/clients')) {
     clientsRoute(req, res);
   } else if (req.url.startsWith('/api/products')) {
     productsRoute(req, res);
   } else if (req.url.startsWith('/api/payment-methods')) {
     paymentMethodsRoute(req, res);
+  } else if (req.url.startsWith('/api/orders')) {
+    ordersRoute(req, res);
   } else {
     res.statusCode = 404;
     res.end(JSON.stringify({ msg: "Route not found" }));
