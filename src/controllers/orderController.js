@@ -1,3 +1,4 @@
+let ordersDb = require('../data/orders');
 const { orderValidation } = require('../validation/orders');
 const { getClientById } = require('../controllers/clientController');
 const { getProductById, updateProduct } = require('../controllers/productController');
@@ -20,9 +21,9 @@ const createOrder = (newOrder, res) => {
 
   // Verifica se algum get retornou vazio
   const errors = [
-    { data: client, msg: 'Cliente inválido' },
-    { data: product, msg: 'Produto inválido' },
-    { data: paymentMethod, msg: 'Método de Pagamento inválido' }
+    { data: client, msg: 'Cliente não existe' },
+    { data: product, msg: 'Produto não existe' },
+    { data: paymentMethod, msg: 'Método de Pagamento não existe' }
   ].filter(error => !error.data);
 
   if (errors.length > 0) {
@@ -31,24 +32,48 @@ const createOrder = (newOrder, res) => {
     return;
   }
 
-  // Diminui 1 estoque do produto
-  let updatedProduct = { ...product }; // Cria uma cópia do produto original
-  if (updatedProduct.quantity > 0) {
-    updatedProduct.quantity -= 1;
-    updateProduct(productId, updatedProduct, res);
-  } else {
-    res.end(JSON.stringify({ msg: 'Produto sem estoque' }));
-    return;
+  // Total da venda
+  const orderInstallments = calculateOrderInstallments(product.price, paymentMethod.installments);
+
+  // Retorna produto com -1 estoque
+  const updatedProduct = reduceProductStock(productId, product, res);
+
+  let order = updatedProduct;
+
+  if (!updatedProduct.hasOwnProperty('error')) {
+    // Informações da venda
+    order = {
+      product: updatedProduct,
+      paymentMethod: paymentMethod,
+      total: orderInstallments
+    };
+
+    // Salvar venda
+    order.id = ordersDb.length + 1;
+    ordersDb.push(order);
   }
 
-  // [] - Exibir cálculo do total da venda
-  // [] - Salvar venda
+  // Retorna 200 mesmo que não tenha atualizado o estoque do produto
+  res.statusCode = 200;
+  res.end(JSON.stringify(order));
+};
 
-  // Salvar venda
-  // orders.push(newOrder);
+// Diminui 1 estoque do produto
+const reduceProductStock = (productId, originalProduct) => {
+  let updatedProduct = { ...originalProduct }; // Cria uma cópia do produto original
 
-  res.statusCode = 302;
-  res.end(JSON.stringify(updatedProduct));
+  if (updatedProduct.quantity > 0) {
+    updatedProduct.quantity -= 1;
+    return updateProduct(productId, updatedProduct);
+  } else {
+    return { error: 'Produto sem estoque' };
+  }
+};
+
+// Calcula valor total da venda
+const calculateOrderInstallments = (price, installments) => {
+  // product.price / paymentMethod.installments
+  return (price / installments).toFixed(2);
 };
 
 module.exports = {
