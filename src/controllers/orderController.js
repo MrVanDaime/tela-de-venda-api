@@ -2,7 +2,7 @@ let ordersDb = require('../data/orders');
 const { orderValidation } = require('../validation/orders');
 const { getClientById } = require('../controllers/clientController');
 const { getProductById, updateProduct } = require('../controllers/productController');
-const { getPaymentMethodById } = require('../controllers/PaymentMethodController');
+const { getPaymentMethodById } = require('../controllers/paymentMethodController');
 
 const getOrdersByClientId = (paramId) => {
   const filteredOrders = ordersDb.filter(order => order.client.id === paramId);
