@@ -4,7 +4,6 @@ const productsRoute = require('./routes/products');
 const paymentMethodsRoute = require('./routes/paymentMethods');
 const ordersRoute = require('./routes/orders');
 
-// const hostname = 'localhost';
 const PORT = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
