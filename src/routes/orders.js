@@ -1,21 +1,28 @@
-const { orderValidation } = require('../validation/orders');
+// Utils
+const getParamId = require('../utils/getParamId');
 
 // Controller
-const { createOrder } = require('../controllers/orderController');
+const { getOrdersByClientId, createOrder } = require('../controllers/orderController');
 
 // Endpoint atual
 const endpoint = '/api/orders';
 
-// Dados local
-// let clientsDb = require('../data/clients');
-// let productsDb = require('../data/products');
-// let paymentMethodsDb = require('../data/paymentMethods');
-// let orders = [];
-
 module.exports = (req, res) => {
   const { method, url } = req;
 
-  if (method === 'POST' && url === endpoint) {
+  // Get todos os pedidos por cliente
+  if (method === 'GET' && url.startsWith(`${endpoint}/`)) {
+    const paramId = getParamId(url);
+    const orders = getOrdersByClientId(paramId);
+
+    if (orders.length === 0) {
+      res.end(JSON.stringify({ error: 'Nenhuma compra foi feita este cliente' }));
+      return;
+    }
+
+    res.statusCode = 200;
+    res.end(JSON.stringify(orders));
+  } else if (method === 'POST' && url === endpoint) {
     let body = '';
 
     req.on('data', chunk => {
