@@ -4,6 +4,11 @@ const { getClientById } = require('../controllers/clientController');
 const { getProductById, updateProduct } = require('../controllers/productController');
 const { getPaymentMethodById } = require('../controllers/PaymentMethodController');
 
+const getOrdersByClientId = (paramId) => {
+  const filteredOrders = ordersDb.filter(order => order.client.id === paramId);
+  return filteredOrders;
+};
+
 const createOrder = (newOrder, res) => {
   const validationError = orderValidation(newOrder);
 
@@ -43,6 +48,7 @@ const createOrder = (newOrder, res) => {
   if (!updatedProduct.hasOwnProperty('error')) {
     // Informações da venda
     order = {
+      client: client,
       product: updatedProduct,
       paymentMethod: paymentMethod,
       total: orderInstallments
@@ -77,5 +83,6 @@ const calculateOrderInstallments = (price, installments) => {
 };
 
 module.exports = {
+  getOrdersByClientId,
   createOrder
 };
