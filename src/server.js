@@ -4,7 +4,7 @@ const productsRoute = require('./routes/products');
 const paymentMethodsRoute = require('./routes/paymentMethods');
 const ordersRoute = require('./routes/orders');
 
-const hostname = 'localhost';
+// const hostname = 'localhost';
 const PORT = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
@@ -38,6 +38,6 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(PORT, hostname, () => {
-  console.log(`Running on http://${hostname}:${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Running on ${PORT}`);
 });
